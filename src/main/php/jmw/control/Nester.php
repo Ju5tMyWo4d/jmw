@@ -7,19 +7,17 @@ namespace jmw\control;
 use jmw\config\Config;
 use jmw\main\HTTPError;
 use jmw\routing\Router;
-use jmw\main\View;
 
 abstract class Nester extends Controller {
 
     /**
      * Nester constructor.
      * @param Router $router
-     * @param View $view
      * @param string $namespace
      * @throws HTTPError
      */
-    public function __construct(Router $router, View $view, ?string $namespace = null) {
-        parent::__construct($router, $view);
+    public function __construct(Router $router, ?string $namespace = null) {
+        parent::__construct($router);
 
         if($namespace == null) {
             $namespace = strtolower(get_class($this)).'\\';
@@ -32,7 +30,7 @@ abstract class Nester extends Controller {
             $this->{Config::JMW()['controller']['default_method']}();
         } else if($routerElement->isClass()) {
             if(class_exists($routerElement->getValue())) {
-                new ${$routerElement->getValue()}($router, $view);
+                new ${$routerElement->getValue()}($router);
             } else {
                 throw new HTTPError(404);
             }
@@ -41,7 +39,7 @@ abstract class Nester extends Controller {
                 $this->{$routerElement->getValue()}();
             } else if(class_exists($namespace.$routerElement->getValue())) {
                 $tmpController = $namespace.$routerElement->getValue();
-                new $tmpController($router, $view);
+                new $tmpController($router);
             } else {
                 throw new HTTPError(404);
             }
