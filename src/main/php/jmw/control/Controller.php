@@ -21,7 +21,8 @@ abstract class Controller {
     protected $controllerRelativePath;
 
     public function __construct(Router $router) {
-        $this->controllerRelativePath = strtolower(str_replace(Config::JMW()['controller']['default_namespace'], '', get_class($this))).DIRECTORY_SEPARATOR;
+        $path = strtolower(str_replace(Config::JMW()['controller']['default_namespace'], '', get_class($this)));
+        $this->controllerRelativePath = implode(DIRECTORY_SEPARATOR, explode('\\', $path)).DIRECTORY_SEPARATOR;
         $this->router = $router;
     }
 
@@ -41,6 +42,6 @@ abstract class Controller {
     }
 
     protected function renderView($view, $data = null) {
-        View::Render($view, $data, implode(DIRECTORY_SEPARATOR, explode('/', $this->controllerRelativePath)));
+        View::Render($view, $data, $this->controllerRelativePath);
     }
 }
