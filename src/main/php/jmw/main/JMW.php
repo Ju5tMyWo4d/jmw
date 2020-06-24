@@ -29,8 +29,6 @@ final class JMW {
         $router = new Router($path, $routing);
         $routerElement = $router->getRoute();
 
-        $view = new View();
-
         if(!$routerElement->isClass()) {
             $controller = Config::JMW()['controller']['default_namespace'].$routerElement->getValue();
         } else {
@@ -41,7 +39,7 @@ final class JMW {
         ob_start();
 
         try {
-            new $controller($router, $view);
+            new $controller($router);
         } catch(HTTPError $e) {
             ob_clean();
 

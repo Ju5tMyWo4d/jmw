@@ -8,37 +8,48 @@ namespace jmw\main;
 use jmw\config\Config;
 
 class View {
+    /**
+     * @var null
+     */
     protected $data;
-    protected $localDir;
+    /**
+     * @var string
+     */
+    protected $rootPath;
 
     /**
      * View constructor.
+     * @param string $viewPath
+     * @param null $data
+     * @param string $additionalPath
      */
-    public function __construct() {}
-
-    /**
-     * @param string $view
-     * @param mixed|null $data
-     */
-    public function render(string $view, $data = null) {
+    private function __construct(string $viewPath, $data = null, string $additionalPath = '') {
         $this->data = $data;
+        $this->rootPath = $additionalPath;
 
-        include Config::JMW()['dirs']['views'].$view.'.php';
+        $this->renderTemplate($viewPath, true);
     }
 
     /**
-     * @param string $template
+     * @param string $templatePath
+     * @param bool $local
      */
-    public function renderTemplate(string $template) {
+    public function renderTemplate(string $templatePath, bool $local = false) {
         $data = &$this->data;
 
-        include Config::JMW()['dirs']['templates'].$template.'.php';
+        if($local) {
+            include Config::JMW()['dirs']['templates'].$this->rootPath.$templatePath.'.php';
+        } else {
+            include Config::JMW()['dirs']['templates'].$templatePath.'.php';
+        }
     }
 
     /**
-     * @param mixed $localDir
+     * @param string $viewPath
+     * @param null $data
+     * @param string $rootPath
      */
-    public function setLocalDir($localDir) {
-        $this->localDir = $localDir;
+    public static function Render(string $viewPath, $data = null, string $rootPath = '') {
+        new static($viewPath, $data, $rootPath);
     }
 }
