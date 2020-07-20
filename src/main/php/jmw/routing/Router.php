@@ -36,8 +36,10 @@ class Router {
 
         $route = $this->checkRoute($name);
         $route = $route ?? $this->checkRoute(Config::JMW()['router']['match_all_wildcard']);
-        if($route === null && $name === '') {
+        if($route === null && $name === '' && $this->pathExtractor->getCurrentIndex() === 1) {
             $name = Config::JMW()['router']['default_start'];
+        } else if($route === null && $name === '') {
+            return null;
         }
 
         if($route !== null) {
